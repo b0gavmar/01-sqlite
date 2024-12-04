@@ -1,37 +1,22 @@
-import sqlite3 from 'sqlite3'
+import express from "express";
+import cors from "cors";
+import { initializeDB } from "./database.js";
+import usersRouter from "./routes/users.js";
 
-const db = new sqlite3.Database("./database.sqlite");
+const app = express();
 
-const initializeDB = async () =>{
-    await dbRun("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, firstName TEXT, lastName TEXT, email TEXT, class TEXT)")
+app.use(cors());
+app.use(express.json());
+app.use("/api/users", usersRouter);
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: err.message });
+});
+
+const startServer = async () => {
+    await initializeDB();
+    app.listen(3000, () => console.log("Server is running on port 3000"));
 };
 
-const users = [
-    { name: "John Doe", email: "john.doe@example.com" },
-    { name: "Jane Smith", email: "jane.smith@example.com" },
-    { name: "Sam Johnson", email: "sam.johnson@example.com" },
-];
-
-for (const user of users) {
-    await dbRun("INSERT INTO users (name, email) VALUES (?, ?)", [user.name, user.email]);
-}
-
-function dbQuery(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.all(sql, params, (err, rows) => {
-            if (err) reject(err);
-            else resolve(rows);
-        });
-    });
-}
-
-function dbRun(sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.run(sql, params, function (err) {
-            if (err) reject(err);
-            else resolve(this);
-        });
-    });
-}
-
-export { db, dbQuery, dbRun, initializeDB };
+startServer();
