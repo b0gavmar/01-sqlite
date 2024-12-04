@@ -3,18 +3,19 @@ import sqlite3 from 'sqlite3'
 const db = new sqlite3.Database("./database.sqlite");
 
 const initializeDB = async () => {
+    // await dbRun("DROP TABLE users")
     await dbRun("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, firstName TEXT, lastName TEXT, email TEXT, class TEXT)")
 };
 
-const users = [
-    { name: "John Doe", email: "john.doe@example.com" },
-    { name: "Jane Smith", email: "jane.smith@example.com" },
-    { name: "Sam Johnson", email: "sam.johnson@example.com" },
-];
+// const users = [
+//     { name: "John Doe", email: "john.doe@example.com" },
+//     { name: "Jane Smith", email: "jane.smith@example.com" },
+//     { name: "Sam Johnson", email: "sam.johnson@example.com" },
+// ];
 
-for (const user of users) {
-    await dbRun("INSERT INTO users (name, email) VALUES (?, ?)", [user.name, user.email]);
-}
+// for (const user of users) {
+//     await dbRun("INSERT INTO users (name, email) VALUES (?, ?)", [user.name, user.email]);
+// }
 
 function dbQuery(sql, params = []) {
     return new Promise((resolve, reject) => {
